@@ -1,3 +1,7 @@
+# 2.0.3
+new sdk
+sendMessage,sendGroupMessage,sendUnlimitedGroupMessage
+msg renamed payload
 # 2.0.2
 new sdk
 Init version
