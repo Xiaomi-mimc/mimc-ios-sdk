@@ -47,6 +47,7 @@ extern int const CALLID_INVALID;
 + (XMUserManager *)sharedInstance;
 - (BOOL)userLogin;
 - (BOOL)userLogout;
+- (void)GDCTimer;
 - (NSString *)getAppAccount;
 - (void)setAppAccount:(NSString *)appAccount;
 - (MCUser *)getUser;

@@ -17,6 +17,7 @@ int const STATE_REJECT = 2;
 int const CALL_SENDER = 1;
 int const CALL_RECEIVER = 2;
 int const CALLID_INVALID = -1;
+static dispatch_source_t timer;
 
 /**
  * @important!!! appId/appKey/appSecret：
@@ -143,6 +144,25 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     return [_user logout];
 }
 
+- (void)GDCTimer {
+    __block int timeout = TIMEOUT_ON_LAUNCHED;//倒计时时间
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0,queue);
+    dispatch_source_set_timer(timer,dispatch_walltime(NULL, 0),1.0*NSEC_PER_SEC, 0); //每秒执行
+    typeof(self) __weak wself = self;
+    dispatch_source_set_event_handler(timer, ^{
+        if (timeout > 0) {
+            timeout--;
+        }else{
+            dispatch_source_cancel(timer);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                wself.answer = STATE_TIMEOUT;
+            });
+        }
+    });
+    dispatch_resume(timer);
+}
+
 - (NSString *)parseProxyServiceToken:(NSData *)proxyResult {
     if (proxyResult == nil) {
         NSLog(@"parseToken, result is nil");
@@ -216,9 +236,7 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
         };
     });
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(TIMEOUT_ON_LAUNCHED * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.answer = STATE_TIMEOUT;
-    });
+    [self GDCTimer];
     
     while (self.answer != STATE_TIMEOUT) {
         if (self.answer == STATE_AGREE) {
