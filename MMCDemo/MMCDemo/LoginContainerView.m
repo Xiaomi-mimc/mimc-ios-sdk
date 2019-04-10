@@ -183,6 +183,10 @@
     //去掉字符串中的换行符
     
     [mutStr replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:range2];
+
+    //去掉字符串中的反斜杠
+    NSRange range3 = {0,mutStr.length};
+    [mutStr replaceOccurrencesOfString:@"\\" withString:@"" options:NSLiteralSearch range:range3];
     
     return mutStr;
 }
