@@ -17,6 +17,7 @@
 #import "MIMCLoggerWrapper.h"
 #import "MIMCStreamConfig.h"
 #import "MIMCServerAck.h"
+#import "MIMCChannelUser.h"
 
 @class XMDTransceiver;
 @class MIMCConnection;
@@ -38,31 +39,40 @@
 - (void)handleMessage:(NSArray<MIMCMessage*> *)packets user:(MCUser *)user;
 - (void)handleGroupMessage:(NSArray<MIMCGroupMessage*> *)packets;
 - (void)handleServerAck:(MIMCServerAck *)serverAck;
-- (void)handleUnlimitedGroupMessage:(MIMCGroupMessage *)mimcGroupMessage;
+- (void)handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets;
 
 - (void)handleSendMessageTimeout:(MIMCMessage *)message;
 - (void)handleSendGroupMessageTimeout:(MIMCGroupMessage *)groupMessage;
 - (void)handleSendUnlimitedGroupMessageTimeout:(MIMCGroupMessage *)groupMessage;
 @end
 
-@protocol handleUCMessageDelegate <NSObject>
-- (void)handleJoinUnlimitedGroupResp:(int64_t)topicId code:(int)code message:(NSString *)message context:(id)context;
-- (void)handleQuitUnlimitedGroupResp:(int64_t)topicId code:(int)code message:(NSString *)message context:(id)context;
+@protocol handleUnlimitedGroupDelegate <NSObject>
+- (void)handleJoinUnlimitedGroup:(int64_t)topicId code:(int)code message:(NSString *)message context:(id)context;
+- (void)handleQuitUnlimitedGroup:(int64_t)topicId code:(int)code message:(NSString *)message context:(id)context;
 - (void)handleDismissUnlimitedGroup:(int64_t)topicId;
 
-- (void)handleCreateUnlimitedGroup:(NSString *)topicId topicName:(NSString *)topicName success:(BOOL)success desc:(NSString *)desc context:(id)context;
-- (void)handleDismissUnlimitedGroup:(BOOL)success desc:(NSString *)desc context:(id)context;
+- (void)handleCreateUnlimitedGroup:(int64_t)topicId topicName:(NSString *)topicName success:(Boolean)success desc:(NSString *)desc context:(id)context;
+- (void)handleDismissUnlimitedGroup:(Boolean)success desc:(NSString *)desc context:(id)context;
 @end
 
-@protocol rTSCallEventDelegate <NSObject>
+@protocol handleRtsCallDelegate <NSObject>
 - (MIMCLaunchedResponse *)onLaunched:(NSString *)fromAccount fromResource:(NSString *)fromResource callId:(int64_t)callId appContent:(NSData *)appContent;
 - (void)onAnswered:(int64_t)callId accepted:(Boolean)accepted desc:(NSString *)desc; // 会话接通之后的回调
 - (void)onClosed:(int64_t)callId desc:(NSString *)desc; // 会话被关闭的回调
-- (void)handleData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType; // 接收到数据的回调
-- (void)handleSendDataSuccess:(int64_t)callId dataId:(int)dataId context
-                             :(void *)context; //发送数据成功的回调
-- (void)handleSendDataFail:(int64_t)callId dataId:(int)dataId context
-                          :(void *)context; //发送数据失败的回调
+- (void)onData:(int64_t)callId fromAccount:(NSString *)fromAccount resource:(NSString *)resource data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType; // 接收到数据的回调
+- (void)onSendDataSuccess:(int64_t)callId dataId:(int)dataId context:(id)context; //发送数据成功的回调
+- (void)onSendDataFailure:(int64_t)callId dataId:(int)dataId context:(id)context; //发送数据失败的回调
+@end
+
+@protocol handleRtsChannelDelegate <NSObject>
+- (void)onCreateChannel:(int64_t)identity callId:(int64_t)callId callKey:(NSString *)callKey success:(Boolean)success desc:(NSString *)desc extra:(NSData *)extra; // 创建频道回调
+- (void)onJoinChannel:(int64_t)callId appAccount:(NSString *)appAccount resource:(NSString *)resource success:(Boolean)success desc:(NSString *)desc extra:(NSData *)extra members:(NSArray<MIMCChannelUser*> *)members; // 加入频道回调
+- (void)onLeaveChannel:(int64_t)callId appAccount:(NSString *)appAccount resource:(NSString *)resource success:(Boolean)success desc:(NSString *)desc; // 离开频道回调
+- (void)onUserJoined:(int64_t)callId appAccount:(NSString *)appAccount resource:(NSString *)resource; // 新加入用户回调
+- (void)onUserLeft:(int64_t)callId appAccount:(NSString *)appAccount resource:(NSString *)resource; // 用户离开回调
+- (void)onData:(int64_t)callId fromAccount:(NSString *)fromAccount resource:(NSString *)resource data:(NSData *)data dataType:(RtsDataType)dataType; // 接收流数据
+- (void)onSendDataSuccess:(int64_t)callId dataId:(int)dataId context:(id)context; // 发送流数据成功的回调
+- (void)onSendDataFailure:(int64_t)callId dataId:(int)dataId context:(id)context; // 发送流数据失败的回调
 @end
 
 typedef enum _OnlineStatus {
@@ -103,8 +113,9 @@ static NSString *join(NSMutableDictionary *kvs) {
 @property(nonatomic, weak) id<parseTokenDelegate> parseTokenDelegate;
 @property(nonatomic, weak) id<onlineStatusDelegate> onlineStatusDelegate;
 @property(nonatomic, weak) id<handleMessageDelegate> handleMessageDelegate;
-@property(nonatomic, weak) id<handleUCMessageDelegate> handleUCMessageDelegate;
-@property(nonatomic, weak) id<rTSCallEventDelegate> rTSCallEventDelegate;
+@property(nonatomic, weak) id<handleUnlimitedGroupDelegate> handleUnlimitedGroupDelegate;
+@property(nonatomic, weak) id<handleRtsCallDelegate> handleRtsCallDelegate;
+@property(nonatomic, weak) id<handleRtsChannelDelegate> handleRtsChannelDelegate;
 
 - (BOOL)logout;
 - (NSString *)pull;
@@ -135,22 +146,26 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (int64_t)dialCall:(NSString *)toAppAccount toResource:(NSString *)toResource;
 - (int64_t)dialCall:(NSString *)toAppAccount appContent:(NSData *)appContent;
 - (int64_t)dialCall:(NSString *)toAppAccount toResource:(NSString *)toResource appContent:(NSData *)appContent;
-- (Boolean)sendRtsData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType dataPriority:(MIMCDataPriority)dataPriority canBeDropped:(Boolean)canBeDropped context:(void *)context;
-- (Boolean)sendRtsData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType dataPriority:(MIMCDataPriority)dataPriority canBeDropped:(Boolean)canBeDropped resendCount:(int)resendCount context:(void *)context;
-- (Boolean)sendRtsData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType dataPriority:(MIMCDataPriority)dataPriority canBeDropped:(Boolean)canBeDropped resendCount:(int)resendCount channelType:(RtsChannelType)channelType context:(void *)context;
+- (int)sendRtsData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType dataPriority:(MIMCDataPriority)dataPriority canBeDropped:(Boolean)canBeDropped context:(id)context;
+- (int)sendRtsData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType dataPriority:(MIMCDataPriority)dataPriority canBeDropped:(Boolean)canBeDropped resendCount:(int)resendCount context:(id)context;
+- (int)sendRtsData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType dataPriority:(MIMCDataPriority)dataPriority canBeDropped:(Boolean)canBeDropped resendCount:(int)resendCount channelType:(RtsChannelType)channelType context:(id)context;
 
 - (void)closeCall:(int64_t)callId;
 - (void)closeCall:(int64_t)callId byeReason:(NSString *)byeReason;
 - (void)clearLocalRelayLinkStateAndTs;
+
+- (int64_t)createChannel:(NSData *)extra;
+- (void)joinChannel:(int64_t)callId callKey:(NSString *)callKey;
+- (void)leaveChannel:(int64_t)callId callKey:(NSString *)callKey;
 
 - (BOOL)createUnlimitedGroup:(NSString *)topicName context:(id)context;
 - (BOOL)dismissUnlimitedGroup:(int64_t)topicId context:(id)context;
 - (NSString *)joinUnlimitedGroup:(int64_t)topicId context:(id)context;
 - (NSString *)quitUnlimitedGroup:(int64_t)topicId context:(id)context;
 - (NSString *)sendUnlimitedGroupMessage:(int64_t)topicId payload:(NSData *)payload;
-- (NSString *)sendUnlimitedGroupMessage:(int64_t)topicId payload:(NSData *)payload isStore:(BOOL)isStore;
+- (NSString *)sendUnlimitedGroupMessage:(int64_t)topicId payload:(NSData *)payload isStore:(Boolean)isStore;
 - (NSString *)sendUnlimitedGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType;
-- (NSString *)sendUnlimitedGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType isStore:(BOOL)isStore;
+- (NSString *)sendUnlimitedGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType isStore:(Boolean)isStore;
 
 - (int)getChid;
 - (NSString *)getUuid;
@@ -169,6 +184,8 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (int)getTryCreateConnCount;
 - (MIMCHistoryMessagesStorage *)getHistoryMessagesStorage;
 - (MIMCThreadSafeDic *)getCurrentCalls;
+- (MIMCThreadSafeDic *)getCurrentChannels;
+- (MIMCThreadSafeDic *)getTempRtsChannels;
 - (RelayLinkState)getRelayLinkState;
 - (int64_t)getLatestLegalRelayConnStateTs;
 - (int64_t)getRelayConnId;

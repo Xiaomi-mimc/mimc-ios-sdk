@@ -135,7 +135,7 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     _user.parseTokenDelegate = self;
     _user.onlineStatusDelegate = self;
     _user.handleMessageDelegate = self;
-    _user.rTSCallEventDelegate = self;
+    _user.handleRtsCallDelegate = self;
     
     return [_user login];
 }
@@ -210,12 +210,12 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     NSLog(@"handleSendGroupMessageTimeout, groupMessag.packetId=%@, groupMessag.sequence=%lld, groupMessage.timestamp=%lld, groupMessage.fromAccount=%@, groupMessage.topicId=%lld, groupMessag.payload=%@, groupMessag.bizType=%@", groupMessage.getPacketId, groupMessage.getSequence, groupMessage.getTimestamp, groupMessage.getFromAccount, groupMessage.getTopicId, groupMessage.getPayload, groupMessage.getBizType);
 }
 
-- (void)handleUnlimitedGroupMessage:(MIMCGroupMessage *)mimcGroupMessage {
-    NSLog(@"handleUnlimitedGroupMessage, receive unlimitedGroupMessage packet, packetId=%@, sequence=%lld, timestamp=%lld, fromAccount=%@, topicId=%lld, payload=%@, bizType=%@", mimcGroupMessage.getPacketId, mimcGroupMessage.getSequence, mimcGroupMessage.getTimestamp, mimcGroupMessage.getFromAccount, mimcGroupMessage.getTopicId, mimcGroupMessage.getPayload, mimcGroupMessage.getBizType);
+- (void)handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets {
+    NSLog(@"handleUnlimitedGroupMessage");
 }
 
-- (void)handleSendUnlimitedGroupMessageTimeout:(UCPacket *)ucPacket {
-    NSLog(@"handleSendUnlimitedGroupMessageTimeout, ucPacket=%@", ucPacket);
+- (void)handleSendUnlimitedGroupMessageTimeout:(MIMCGroupMessage *)groupMessage {
+    NSLog(@"handleSendUnlimitedGroupMessageTimeout, groupMessage=%@", groupMessage);
 }
 
 - (MIMCLaunchedResponse *)onLaunched:(NSString *)fromAccount fromResource:(NSString *)fromResource callId:(int64_t)callId appContent:(NSData *)appContent {
@@ -259,16 +259,16 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     [self.OnCallStateDelegate onClosed:callId desc:desc];
 }
 
-- (void)handleData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType {
-    [self.OnCallStateDelegate handleData:callId data:data dataType:dataType channelType:channelType];
+- (void)onData:(int64_t)callId fromAccount:(NSString *)fromAccount resource:(NSString *)resource data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType {
+    [self.OnCallStateDelegate onData:callId fromAccount:fromAccount resource:resource data:data dataType:dataType channelType:channelType];
 }
 
-- (void)handleSendDataSuccess:(int64_t)callId dataId:(int)dataId context:(void *)context {
-    NSLog(@"handleSendDataSuccess, callId=%lld, dataId=%d", callId, dataId);
+- (void)onSendDataSuccess:(int64_t)callId dataId:(int)dataId context:(id)context {
+    NSLog(@"onSendDataSuccess, callId=%lld, dataId=%d", callId, dataId);
 }
 
-- (void)handleSendDataFail:(int64_t)callId dataId:(int)dataId context:(void *)context {
-    NSLog(@"handleSendDataFail, callId=%lld, dataId=%d", callId, dataId);
+- (void)onSendDataFailure:(int64_t)callId dataId:(int)dataId context:(id)context {
+    NSLog(@"onSendDataFailure, callId=%lld, dataId=%d", callId, dataId);
 }
 
 - (NSString *)getAppAccount {

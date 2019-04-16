@@ -1,5 +1,20 @@
 # 更新日志
 
+## [MMCSDK_2_0_8] - 2019-04-16
+
+### 变更
+
+* 修复登录用户信息不缓存时第一次发送消息失败问题
+* 实时流`sendRtsData`方法成功返回`dataId`，失败返回`-1`
+* 实时流单聊接口`rTsCallEventDelegate`更名为`handleRtsCallDelegate`
+* 实时流单聊回调`handleData`更名为`onData`，新增`frmoAccount`和`resource`参数
+* 实时流中参数`context`的类型由`void *`改为`id`
+* 实时流单聊回调`handleSendDataSuccess`更名为`onSendDataSuccess`
+* 实时流单聊回调`handleSendDataFail`更名为`onSendDataFailure`
+* 接收消息回调`handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets`
+* 接收消息回调`handleSendUnlimitedGroupMessageTimeout:(MIMCGroupMessage *)groupMessage`
+* 无限大群回调部分部分参数名变更，具体可参考文档
+
 ## [MMCSDK_2_0_7] - 2019-04-02
 
 ### 变更

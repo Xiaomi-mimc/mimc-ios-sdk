@@ -186,8 +186,8 @@
     }
 }
 
-- (void)handleData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType {
-    NSLog(@"handleData, callId=%lld, data=%@, dataType=%d, channelType=%d", callId, data, dataType, channelType);
+- (void)onData:(int64_t)callId fromAccount:(NSString *)fromAccount resource:(NSString *)resource data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType {
+    NSLog(@"onData, callId=%lld, fromAccount=%@, resource=%@, data=%@, dataType=%d, channelType=%d", callId, fromAccount, resource, data, dataType, channelType);
     self.callId = callId;
     [self.decodeQueue push:data];
 }
@@ -240,11 +240,11 @@
                 audioPacket.payload = aacData;
                 audioPacket.sequence = ++weakSelf.sequence;
                 
-                if ([weakSelf.userManager.getUser sendRtsData:weakSelf.callId data:[audioPacket data] dataType:AUDIO dataPriority:MIMC_P0 canBeDropped:false resendCount:0 channelType:RELAY context:NULL]) {
-                    NSLog(@"handleData, sendRtsData success");
+                if ([weakSelf.userManager.getUser sendRtsData:weakSelf.callId data:[audioPacket data] dataType:AUDIO dataPriority:MIMC_P0 canBeDropped:false resendCount:0 channelType:RELAY context:NULL] != -1) {
+                    NSLog(@"sendRtsData success");
                     return;
                 }
-                NSLog(@"handleData, sendRtsData fail");
+                NSLog(@"sendRtsData fail");
                 [weakSelf.caputer stopRecord];
             }];
         } @catch (NSException *exception) {

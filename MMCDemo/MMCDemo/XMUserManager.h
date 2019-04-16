@@ -34,10 +34,10 @@ extern int const CALLID_INVALID;
 @protocol OnCallStateDelegate
 - (void)onAnswered:(int64_t)callId accepted:(Boolean)accepted desc:(NSString *)desc;
 - (void)onClosed:(int64_t)callId desc:(NSString *)desc;
-- (void)handleData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType;
+- (void)onData:(int64_t)callId fromAccount:(NSString *)fromAccount resource:(NSString *)resource data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType;
 @end
 
-@interface XMUserManager : NSObject<parseTokenDelegate, onlineStatusDelegate, handleMessageDelegate, rTSCallEventDelegate>
+@interface XMUserManager : NSObject<parseTokenDelegate, onlineStatusDelegate, handleMessageDelegate, handleRtsCallDelegate>
 
 @property(nonatomic, weak) id<showRecvMsgDelegate> showRecvMsgDelegate;
 @property(nonatomic, weak) id<returnUserStatusDelegate> returnUserStatusDelegate;
@@ -60,13 +60,13 @@ extern int const CALLID_INVALID;
 - (void)handleServerAck:(MIMCServerAck *)serverAck;
 - (void)handleSendMessageTimeout:(MIMCMessage *)message;
 - (void)handleSendGroupMessageTimeout:(MIMCGroupMessage *)groupMessage;
-- (void)handleUnlimitedGroupMessage:(MIMCGroupMessage *)mimcGroupMessage;
-- (void)handleSendUnlimitedGroupMessageTimeout:(UCPacket *)ucPacket;
+- (void)handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets;
+- (void)handleSendUnlimitedGroupMessageTimeout:(MIMCGroupMessage *)groupMessage;
 
 - (MIMCLaunchedResponse *)onLaunched:(NSString *)fromAccount fromResource:(NSString *)fromResource callId:(int64_t)callId appContent:(NSData *)appContent;
 - (void)onAnswered:(int64_t)callId accepted:(Boolean)accepted desc:(NSString *)desc; // 会话接通之后的回调
 - (void)onClosed:(int64_t)callId desc:(NSString *)desc; // 会话被关闭的回调
-- (void)handleData:(int64_t)callId data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType; // 接收到数据的回调
-- (void)handleSendDataSuccess:(int64_t)callId dataId:(int)dataId context:(void *)context;
-- (void)handleSendDataFail:(int64_t)callId dataId:(int)dataId context:(void *)context;
+- (void)onData:(int64_t)callId fromAccount:(NSString *)fromAccount resource:(NSString *)resource data:(NSData *)data dataType:(RtsDataType)dataType channelType:(RtsChannelType)channelType; // 接收到数据的回调
+- (void)onSendDataSuccess:(int64_t)callId dataId:(int)dataId context:(id)context;
+- (void)onSendDataFailure:(int64_t)callId dataId:(int)dataId context:(id)context;
 @end
