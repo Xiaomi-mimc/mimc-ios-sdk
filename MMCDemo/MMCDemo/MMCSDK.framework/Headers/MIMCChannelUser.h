@@ -14,6 +14,6 @@
 
 - (NSString *)getAppAccount;
 
-- (NSString *)getresource;
+- (NSString *)getResource;
 
 @end

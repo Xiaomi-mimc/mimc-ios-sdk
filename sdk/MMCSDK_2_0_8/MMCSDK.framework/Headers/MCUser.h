@@ -204,6 +204,7 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (NSString *)getFeDomain;
 - (NSString *)getRelayDomain;
 - (int64_t)getRegionBucketFromCallSession:(int64_t)callId;
+- (NSArray<MIMCChannelUser *> *)getChannelUsers:(int64_t)callId;
 
 - (void)setChid:(int)chid;
 - (void)setUuid:(NSString *)uuid;
@@ -227,6 +228,7 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (void)setRegionBucket:(int64_t)regionBucket;
 - (void)setFeDomain:(NSString *)feDomain;
 - (void)setRelayDomain:(NSString *)relayDomain;
+- (void)setMaxRtsCallCount:(int)maxRtsCallCount;
 
 - (void)initAudioStreamConfig:(MIMCStreamConfig *)audioStreamConfig;
 - (MIMCStreamConfig *)getAudioStreamConfig;
