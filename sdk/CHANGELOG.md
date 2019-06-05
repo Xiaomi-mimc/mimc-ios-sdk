@@ -1,5 +1,13 @@
 # 更新日志
 
+## [MMCSDK_2_1_1] - 2019-06-05
+
+### 变更
+
+* `user`初始化`initWithAppId`去掉`request`。
+* 改变获取token方式，由开发者获取token返回给sdk。`parseProxyServiceToken:(void(^)(NSString *data))callback；`具体实现方式可参考demo。
+
+
 ## [MMCSDK_2_1_0] - 2019-05-21
 
 ### 变更

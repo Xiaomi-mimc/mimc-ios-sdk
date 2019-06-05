@@ -124,14 +124,7 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
 }
 
 - (BOOL)userLogin {
-    NSURL *url = [NSURL URLWithString:_url];
-    NSMutableURLRequest *request = [self generateHttpRequest:url appId:_appId appKey:_appKey appSecret:_appSecret appAccount:_appAccount];
-    if (request == nil) {
-        NSLog(@"userLogin, request is nil");
-        return false;
-    }
-    
-    _user = [[MCUser alloc] initWithAppId:_appId andAppAccount:_appAccount andAsynchFetchTokenRequest:request];
+    _user = [[MCUser alloc] initWithAppId:_appId andAppAccount:_appAccount];
     _user.parseTokenDelegate = self;
     _user.onlineStatusDelegate = self;
     _user.handleMessageDelegate = self;
@@ -163,14 +156,36 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     dispatch_resume(timer);
 }
 
-- (NSString *)parseProxyServiceToken:(NSData *)proxyResult {
-    if (proxyResult == nil) {
-        NSLog(@"parseToken, result is nil");
-        return nil;
-    }
+- (void)parseProxyServiceToken:(void(^)(NSString *data))callback {
+    NSLog(@"parseProxyServiceToken, comes");
+    NSURL *url = [NSURL URLWithString:self.url];
+    NSMutableURLRequest *request = [self generateHttpRequest:url appId:self.appId appKey:self.appKey appSecret:self.appSecret appAccount:self.appAccount];
+    void (^completionHandler)(NSData *, NSURLResponse *, NSError *) = ^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (data == nil || data.length == 0 || response == nil || [(NSHTTPURLResponse *)response statusCode] != 200) {
+            [MIMCLoggerWrapper.sharedInstance warn:@"parseProxyServiceToken, HTTP_REQUEST_FAIL, data=%@, data_len=%lu, response=%@, response_statusCode=%ld", data, (long)data.length, response, (long)[(NSHTTPURLResponse *)response statusCode]];
+            return;
+        }
+        [MIMCLoggerWrapper.sharedInstance info:@"parseProxyServiceToken, HTTP_REQUEST_SUCCESS, data=%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
+        
+        NSMutableDictionary *dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        if (dataDic == nil || dataDic.count == 0) {
+            [MIMCLoggerWrapper.sharedInstance warn:@"parseProxyServiceToken, dataDic is nil"];
+            return;
+        }
+        if ([[dataDic objectForKey:@"code"] intValue] != 200) {
+            [MIMCLoggerWrapper.sharedInstance warn:@"parseProxyServiceToken, JSON_RESULT_CODE NOT EQUAL 200"];
+            return;
+        }
+        NSMutableDictionary *tokenDic = [dataDic objectForKey:@"data"];
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:tokenDic options:0 error:0];
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        if (callback) {
+            callback(jsonString);
+        }
+    };
     
-    NSLog(@"parseToken = %@", [[NSString alloc] initWithData:proxyResult encoding:NSUTF8StringEncoding]);
-    return [[NSString alloc] initWithData:proxyResult encoding:NSUTF8StringEncoding];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:completionHandler] resume];
+
 }
 
 - (void)statusChange:(MCUser *)user status:(int)status type:(NSString *)type reason:(NSString *)reason desc:(NSString *)desc {

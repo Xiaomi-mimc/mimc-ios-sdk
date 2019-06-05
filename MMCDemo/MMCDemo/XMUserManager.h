@@ -53,7 +53,7 @@ extern int const CALLID_INVALID;
 - (MCUser *)getUser;
 - (void)setUser:(MCUser *)user;
 - (void)setLoginVC:(UIViewController *)loginVC;
-- (NSString *)parseProxyServiceToken:(NSData *)proxyResult;
+- (void)parseProxyServiceToken:(void(^)(NSString *data))callback;
 - (void)statusChange:(MCUser *)user status:(int)status type:(NSString *)type reason:(NSString *)reason desc:(NSString *)desc;
 - (void)handleMessage:(NSArray<MIMCMessage*> *)packets user:(MCUser *)user;
 - (void)handleGroupMessage:(NSArray<MIMCGroupMessage*> *)packets;

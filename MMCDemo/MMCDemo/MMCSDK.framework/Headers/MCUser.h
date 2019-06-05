@@ -28,7 +28,7 @@
 @class BindRelayResponse;
 
 @protocol parseTokenDelegate <NSObject>
-- (NSString *)parseProxyServiceToken:(NSData *)proxyResult;
+- (void)parseProxyServiceToken:(void(^)(NSString *data))callback;
 @end
 
 @protocol onlineStatusDelegate <NSObject>
@@ -120,7 +120,7 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (BOOL)logout;
 - (NSString *)pull;
 - (BOOL)login;
-- (BOOL)login:(BOOL)useCache;
+- (BOOL)login:(BOOL)useCache DEPRECATED_ATTRIBUTE;
 - (void)setOnlineStatus:(OnlineStatus)status;
 - (void)addCloudAttr:(NSString *)key value:(NSString *)value;
 - (void)addClientAttr:(NSString *)key value:(NSString *)value;
@@ -134,8 +134,10 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType;
 - (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType isStore:(Boolean)isStore;
 - (Boolean)sendPacket:(NSString *)msgId payload:(NSData *)payload msgType:(NSString *)msgType;
-- (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount andAsynchFetchTokenRequest:(NSMutableURLRequest *)asynchFetchTokenRequest;
-- (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount andResource:(NSString *)resource andAsynchFetchTokenRequest:(NSMutableURLRequest *)asynchFetchTokenRequest;
+- (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount;
+- (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount andResource:(NSString *)resource;
+- (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount andUseCache:(BOOL)useCache;
+- (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount andResource:(NSString *)resource andUseCache:(BOOL)useCache;
 - (BOOL)isOnline;
 - (void)destroy;
 - (void)dealloc;
@@ -181,7 +183,6 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (OnlineStatus)getStatus;
 - (int64_t)getLastLoginTimestamp;
 - (int64_t)getLastCreateConnTimestamp;
-- (int)getTryCreateConnCount;
 - (MIMCHistoryMessagesStorage *)getHistoryMessagesStorage;
 - (MIMCThreadSafeDic *)getCurrentCalls;
 - (MIMCThreadSafeDic *)getCurrentChannels;
@@ -213,8 +214,6 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (void)setToken:(NSString *)token;
 - (void)setLastLoginTimestamp:(int64_t)lastLoginTimestamp;
 - (void)setLastCreateConnTimestamp:(int64_t)lastCreateConnTimestamp;
-- (void)setTryCreateConnCount:(int)tryCreateConnCount;
-- (void)setPingFlag:(BOOL)pingFlag;
 - (void)setRelayLinkState:(RelayLinkState)relayLinkState;
 - (void)setLatestLegalRelayConnStateTs:(int64_t)latestLegalRelayConnStateTs;
 - (void)setRelayConnId:(int64_t)relayConnId;
