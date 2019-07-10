@@ -214,7 +214,7 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
 }
 
 - (void)handleServerAck:(MIMCServerAck *)serverAck {
-    NSLog(@"handleServerAck, ReceiveMessageAck, ackPacketId=%@, sequence=%lld, timestamp=%lld, desc=%@", serverAck.getPacketId, serverAck.getSequence, serverAck.getTimestamp, serverAck.getDesc);
+    NSLog(@"handleServerAck, ReceiveMessageAck, ackPacketId=%@, sequence=%lld, timestamp=%lld, code=%d, desc=%@", serverAck.getPacketId, serverAck.getSequence, serverAck.getTimestamp, serverAck.getCode, serverAck.getDesc);
 }
 
 - (void)handleSendMessageTimeout:(MIMCMessage *)message {

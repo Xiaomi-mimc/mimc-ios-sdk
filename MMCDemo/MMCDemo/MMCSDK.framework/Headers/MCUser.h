@@ -118,7 +118,7 @@ static NSString *join(NSMutableDictionary *kvs) {
 @property(nonatomic, weak) id<handleRtsChannelDelegate> handleRtsChannelDelegate;
 
 - (BOOL)logout;
-- (NSString *)pull;
+//- (NSString *)pull;
 - (BOOL)login;
 - (BOOL)login:(BOOL)useCache DEPRECATED_ATTRIBUTE;
 - (void)setOnlineStatus:(OnlineStatus)status;
