@@ -228,6 +228,10 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (void)setFeDomain:(NSString *)feDomain;
 - (void)setRelayDomain:(NSString *)relayDomain;
 - (void)setMaxRtsCallCount:(int)maxRtsCallCount;
+- (NSArray *)getFeIpArr;
+- (void)setFeIpArr:(NSArray *)feIpArr;
+- (NSArray *)getRelayIpArr;
+- (void)setRelayIpArr:(NSArray *)relayIpArr;
 
 - (void)initAudioStreamConfig:(MIMCStreamConfig *)audioStreamConfig;
 - (MIMCStreamConfig *)getAudioStreamConfig;
@@ -244,4 +248,5 @@ static NSString *join(NSMutableDictionary *kvs) {
 
 + (void)setMIMCLogSwitch:(BOOL)logSwitch;
 + (void)setMIMCLogLevel:(MIMCLogLevel)level;
++ (void)writeLog2File:(void (^)(BOOL Susscess))callback;
 @end

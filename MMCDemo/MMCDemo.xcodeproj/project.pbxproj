@@ -706,6 +706,7 @@
 		379BC8C620120D2B006F69DE /* MMCDemo */ = {
 			isa = PBXGroup;
 			children = (
+				379BC8DD20120D54006F69DE /* image */,
 				10271D0422054D3600CD74EC /* proto */,
 				10271CF722054D3200CD74EC /* audio */,
 				10271C5B22054CD400CD74EC /* FFmpeg-iOS */,
@@ -728,7 +729,6 @@
 				37BF626621104F2D006DCAC8 /* voiceCallViewController.m */,
 				379BC90220120EBF006F69DE /* XMUserManager.h */,
 				379BC90320120EC7006F69DE /* XMUserManager.mm */,
-				379BC8DD20120D54006F69DE /* image */,
 				379BC8C720120D2B006F69DE /* AppDelegate.h */,
 				379BC8C820120D2B006F69DE /* AppDelegate.m */,
 				379BC8CA20120D2B006F69DE /* ViewController.h */,
