@@ -47,12 +47,11 @@
 @end
 
 @protocol handleUnlimitedGroupDelegate <NSObject>
-- (void)handleJoinUnlimitedGroup:(int64_t)topicId code:(int)code message:(NSString *)message context:(id)context;
-- (void)handleQuitUnlimitedGroup:(int64_t)topicId code:(int)code message:(NSString *)message context:(id)context;
+- (void)handleCreateUnlimitedGroup:(int64_t)topicId topicName:(NSString *)topicName code:(int)code desc:(NSString *)desc context:(id)context;
+- (void)handleJoinUnlimitedGroup:(int64_t)topicId code:(int)code desc:(NSString *)desc context:(id)context;
+- (void)handleQuitUnlimitedGroup:(int64_t)topicId code:(int)code desc:(NSString *)desc context:(id)context;
+- (void)handleDismissUnlimitedGroup:(int64_t)topicId code:(int)code desc:(NSString *)desc context:(id)context;
 - (void)handleDismissUnlimitedGroup:(int64_t)topicId;
-
-- (void)handleCreateUnlimitedGroup:(int64_t)topicId topicName:(NSString *)topicName success:(Boolean)success desc:(NSString *)desc context:(id)context;
-- (void)handleDismissUnlimitedGroup:(Boolean)success desc:(NSString *)desc context:(id)context;
 @end
 
 @protocol handleRtsCallDelegate <NSObject>
@@ -140,8 +139,6 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount andResource:(NSString *)resource andUseCache:(BOOL)useCache;
 - (BOOL)isOnline;
 - (void)destroy;
-- (void)dealloc;
-- (void)closeConnection;
 - (void)handleUDPConnClosed:(int64_t)connId connCloseType:(int)connCloseType;
 
 - (int64_t)dialCall:(NSString *)toAppAccount;
@@ -196,7 +193,6 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (BindRelayResponse *)getBindRelayResponse;
 - (XMDTransceiver *)getXmdTransceiver;
 - (NSMutableSet *)getUcTopicSet;
-- (NSMutableDictionary *)getUcContextDic;
 - (int64_t)getLastPingCallManagerTimestamp;
 - (int64_t)getLastPingRelayTimestamp;
 - (int)getMaxRtsCallCount;
