@@ -91,6 +91,12 @@ typedef enum _MIMCDataPriority {
     MIMC_P2,
 } MIMCDataPriority;
 
+typedef enum _TimeUnit {
+    MILLISECONDS,
+    SECONDS,
+    MINUTES
+} TimeUnit;
+
 static NSString *join(NSMutableDictionary *kvs) {
     if (kvs == nil) {
         return @"";
@@ -179,7 +185,6 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (MIMCConnection *)getConn;
 - (OnlineStatus)getStatus;
 - (int64_t)getLastLoginTimestamp;
-- (int64_t)getLastCreateConnTimestamp;
 - (MIMCHistoryMessagesStorage *)getHistoryMessagesStorage;
 - (MIMCThreadSafeDic *)getCurrentCalls;
 - (MIMCThreadSafeDic *)getCurrentChannels;
@@ -209,7 +214,6 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (void)setSecurityKey:(NSString *)securityKey;
 - (void)setToken:(NSString *)token;
 - (void)setLastLoginTimestamp:(int64_t)lastLoginTimestamp;
-- (void)setLastCreateConnTimestamp:(int64_t)lastCreateConnTimestamp;
 - (void)setRelayLinkState:(RelayLinkState)relayLinkState;
 - (void)setLatestLegalRelayConnStateTs:(int64_t)latestLegalRelayConnStateTs;
 - (void)setRelayConnId:(int64_t)relayConnId;
@@ -241,6 +245,11 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (int)getRecvBufferSize;
 - (void)clearRecvBuffer;
 - (float)getRecvBufferUsageRate;
+
+- (void)setBaseOfBackoffWhenFetchToken:(TimeUnit)timeUnit andBase:(int64_t)base;
+- (void)setCapOfBackoffWhenFetchToken:(TimeUnit)timeUnit andCap:(int64_t)cap;
+- (void)setBaseOfBackoffWhenConnectFe:(TimeUnit)timeUnit andBase:(int64_t)base;
+- (void)setCapOfBackoffWhenConnectFe:(TimeUnit)timeUnit andCap:(int64_t)cap;
 
 + (void)setMIMCLogSwitch:(BOOL)logSwitch;
 + (void)setMIMCLogLevel:(MIMCLogLevel)level;
