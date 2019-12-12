@@ -134,7 +134,9 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
 }
 
 - (BOOL)userLogout {
-    return [_user logout];
+    [_user logout];
+    [_user destroy];
+    return true;
 }
 
 - (void)GDCTimer {
