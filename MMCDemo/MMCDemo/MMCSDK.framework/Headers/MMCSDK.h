@@ -25,6 +25,7 @@ FOUNDATION_EXPORT const unsigned char MMCSDKVersionString[];
 #import <MMCSDK/MIMCLoggerWrapper.h>
 #import <MMCSDK/MIMCStreamConfig.h>
 #import <MMCSDK/MIMCServerAck.h>
+#import <MMCSDK/MCOnlineMessageAck.h>
 
 //#include <MMCSDK/XMDTransceiver.h>
 //#include <MMCSDK/common.h>

@@ -18,6 +18,7 @@
 #import "MIMCStreamConfig.h"
 #import "MIMCServerAck.h"
 #import "MIMCChannelUser.h"
+#import "MCOnlineMessageAck.h"
 
 @class XMDTransceiver;
 @class MIMCConnection;
@@ -40,6 +41,8 @@
 - (void)handleGroupMessage:(NSArray<MIMCGroupMessage*> *)packets;
 - (void)handleServerAck:(MIMCServerAck *)serverAck;
 - (void)handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets;
+- (void)handleOnlineMessage:(MIMCMessage *)onlineMessage;
+- (void)handleOnlineMessageAck:(MCOnlineMessageAck *)onlineMessageAck;
 
 - (void)handleSendMessageTimeout:(MIMCMessage *)message;
 - (void)handleSendGroupMessageTimeout:(MIMCGroupMessage *)groupMessage;
@@ -132,12 +135,18 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (NSString *)createPacketId;
 - (NSString *)sendMessage:(NSString *)toAppAccount payload:(NSData *)payload;
 - (NSString *)sendMessage:(NSString *)toAppAccount payload:(NSData *)payload isStore:(Boolean)isStore;
+- (NSString *)sendMessage:(NSString *)toAppAccount payload:(NSData *)payload isStore:(Boolean)isStore isConversation:(Boolean)isConversation;
 - (NSString *)sendMessage:(NSString *)toAppAccount payload:(NSData *)payload bizType:(NSString *)bizType;
 - (NSString *)sendMessage:(NSString *)toAppAccount payload:(NSData *)payload bizType:(NSString *)bizType isStore:(Boolean)isStore;
+- (NSString *)sendMessage:(NSString *)toAppAccount payload:(NSData *)payload bizType:(NSString *)bizType isStore:(Boolean)isStore isConversation:(Boolean)isConversation;
+- (NSString *)sendOnlineMessage:(NSString *)toAppAccount payload:(NSData *)payload;
+- (NSString *)sendOnlineMessage:(NSString *)toAppAccount payload:(NSData *)payload bizType:(NSString *)bizType;
 - (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload;
 - (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload isStore:(Boolean)isStore;
+- (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload isStore:(Boolean)isStore isConversation:(Boolean)isConversation;
 - (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType;
 - (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType isStore:(Boolean)isStore;
+- (NSString *)sendGroupMessage:(int64_t)topicId payload:(NSData *)payload bizType:(NSString *)bizType isStore:(Boolean)isStore isConversation:(Boolean)isConversation;
 - (Boolean)sendPacket:(NSString *)msgId payload:(NSData *)payload msgType:(NSString *)msgType;
 - (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount;
 - (id)initWithAppId:(int64_t)appId andAppAccount:(NSString *)appAccount andResource:(NSString *)resource;

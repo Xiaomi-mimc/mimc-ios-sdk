@@ -205,7 +205,7 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
             NSLog(@"handleMessage, ReceiveMessage, P2P is nil");
             continue;
         }
-        NSLog(@"handleMessage, ReceiveMessage, P2P, {%@}-->{%@}, packetId=%@, payload=%@, bizType=%@", p.getFromAccount, user.getAppAccount, p.getPacketId, p.getPayload, p.getBizType);
+        NSLog(@"handleMessage, ReceiveMessage, P2P, {%@}-->{%@}, packetId=%@, payload=%@, bizType=%@, sequence=%lld, convIndex=%lld", p.getFromAccount, user.getAppAccount, p.getPacketId, p.getPayload, p.getBizType, p.getSequence, p.getConvIndex);
         
         [self.showRecvMsgDelegate showRecvMsg:p user:user];
     }
@@ -234,6 +234,16 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
 - (void)handleSendUnlimitedGroupMessageTimeout:(MIMCGroupMessage *)groupMessage {
     NSLog(@"handleSendUnlimitedGroupMessageTimeout, groupMessage=%@", groupMessage);
 }
+
+- (void)handleOnlineMessage:(MIMCMessage *)onlineMessage {
+    NSLog(@"handleOnlineMessage");
+}
+
+
+- (void)handleOnlineMessageAck:(MCOnlineMessageAck *)onlineMessageAck {
+    NSLog(@"handleOnlineMessageAck");
+}
+
 
 - (MIMCLaunchedResponse *)onLaunched:(NSString *)fromAccount fromResource:(NSString *)fromResource callId:(int64_t)callId appContent:(NSData *)appContent {
     NSLog(@"onLaunched, fromAccount=%@, fromResource=%@, callId=%lld, appContent=%@", fromAccount, fromResource, callId, appContent);

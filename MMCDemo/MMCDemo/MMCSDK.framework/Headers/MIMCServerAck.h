@@ -12,10 +12,11 @@
 
 - (id)initWithPacketId:(NSString *)packetId andSequence:(int64_t)sequence andTimestamp:(int64_t)timestamp andDesc:(NSString *)desc;
 - (id)initWithPacketId:(NSString *)packetId andSequence:(int64_t)sequence andTimestamp:(int64_t)timestamp andCode:(int)code andDesc:(NSString *)desc;
+- (id)initWithPacketId:(NSString *)packetId andSequence:(int64_t)sequence andTimestamp:(int64_t)timestamp andCode:(int)code andDesc:(NSString *)desc andConvIndex:(int64_t)convIndex;
 - (NSString *)getPacketId;
 - (int64_t)getSequence;
 - (int64_t)getTimestamp;
 - (NSString *)getDesc;
 - (int)getCode;
-
+- (int64_t)getConvIndex;
 @end
