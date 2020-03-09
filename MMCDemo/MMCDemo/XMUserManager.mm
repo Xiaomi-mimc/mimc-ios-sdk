@@ -136,7 +136,7 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
 - (BOOL)userLogout {
     [_user logout];
     [_user destroy];
-    return true;
+    return YES;
 }
 
 - (void)GDCTimer {
@@ -158,31 +158,13 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     dispatch_resume(timer);
 }
 
-- (void)parseProxyServiceToken:(void(^)(NSString *data))callback {
+- (void)parseProxyServiceToken:(void(^)(NSData *data))callback {
     NSLog(@"parseProxyServiceToken, comes");
     NSURL *url = [NSURL URLWithString:self.url];
     NSMutableURLRequest *request = [self generateHttpRequest:url appId:self.appId appKey:self.appKey appSecret:self.appSecret appAccount:self.appAccount];
     void (^completionHandler)(NSData *, NSURLResponse *, NSError *) = ^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (data == nil || data.length == 0 || response == nil || [(NSHTTPURLResponse *)response statusCode] != 200) {
-            [MIMCLoggerWrapper.sharedInstance warn:@"parseProxyServiceToken, HTTP_REQUEST_FAIL, data=%@, data_len=%lu, response=%@, response_statusCode=%ld", data, (long)data.length, response, (long)[(NSHTTPURLResponse *)response statusCode]];
-            return;
-        }
-        [MIMCLoggerWrapper.sharedInstance info:@"parseProxyServiceToken, HTTP_REQUEST_SUCCESS, data=%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
-        
-        NSMutableDictionary *dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        if (dataDic == nil || dataDic.count == 0) {
-            [MIMCLoggerWrapper.sharedInstance warn:@"parseProxyServiceToken, dataDic is nil"];
-            return;
-        }
-        if ([[dataDic objectForKey:@"code"] intValue] != 200) {
-            [MIMCLoggerWrapper.sharedInstance warn:@"parseProxyServiceToken, JSON_RESULT_CODE NOT EQUAL 200"];
-            return;
-        }
-        NSMutableDictionary *tokenDic = [dataDic objectForKey:@"data"];
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:tokenDic options:0 error:0];
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         if (callback) {
-            callback(jsonString);
+            callback(data);
         }
     };
     
@@ -199,7 +181,7 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     NSLog(@"statusChange, Called, uuid=%@, user=%@, status=%d, type=%@, reason=%@, desc=%@",user.getUuid, user, status, type, reason, desc);
 }
 
-- (void)handleMessage:(NSArray<MIMCMessage*> *)packets user:(MCUser *)user {
+- (BOOL)handleMessage:(NSArray<MIMCMessage*> *)packets user:(MCUser *)user {
     for (MIMCMessage *p in packets) {
         if (p == nil) {
             NSLog(@"handleMessage, ReceiveMessage, P2P is nil");
@@ -209,10 +191,12 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
         
         [self.showRecvMsgDelegate showRecvMsg:p user:user];
     }
+    return YES;
 }
 
-- (void)handleGroupMessage:(NSArray<MIMCGroupMessage*> *)packets {
+- (BOOL)handleGroupMessage:(NSArray<MIMCGroupMessage*> *)packets {
     NSLog(@"handleGroupMessage, Called");
+    return YES;
 }
 
 - (void)handleServerAck:(MIMCServerAck *)serverAck {
@@ -227,8 +211,9 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     NSLog(@"handleSendGroupMessageTimeout, groupMessag.packetId=%@, groupMessag.sequence=%lld, groupMessage.timestamp=%lld, groupMessage.fromAccount=%@, groupMessage.topicId=%lld, groupMessag.payload=%@, groupMessag.bizType=%@", groupMessage.getPacketId, groupMessage.getSequence, groupMessage.getTimestamp, groupMessage.getFromAccount, groupMessage.getTopicId, groupMessage.getPayload, groupMessage.getBizType);
 }
 
-- (void)handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets {
+- (BOOL)handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets {
     NSLog(@"handleUnlimitedGroupMessage");
+    return YES;
 }
 
 - (void)handleSendUnlimitedGroupMessageTimeout:(MIMCGroupMessage *)groupMessage {
@@ -244,6 +229,9 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     NSLog(@"handleOnlineMessageAck");
 }
 
+- (BOOL)onPullNotification {
+    return YES;
+}
 
 - (MIMCLaunchedResponse *)onLaunched:(NSString *)fromAccount fromResource:(NSString *)fromResource callId:(int64_t)callId appContent:(NSData *)appContent {
     NSLog(@"onLaunched, fromAccount=%@, fromResource=%@, callId=%lld, appContent=%@", fromAccount, fromResource, callId, appContent);
@@ -267,18 +255,18 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     
     while (self.answer != STATE_TIMEOUT) {
         if (self.answer == STATE_AGREE) {
-            return [[MIMCLaunchedResponse alloc] initWithAccepted:true desc:@"answerOK"];
+            return [[MIMCLaunchedResponse alloc] initWithAccepted:YES desc:@"answerOK"];
         }
         else if(self.answer == STATE_REJECT) {
             [self.OnCallStateDelegate onClosed:callId desc:@"answerNO"];
-            return [[MIMCLaunchedResponse alloc] initWithAccepted:false desc:@"answerNO"];
+            return [[MIMCLaunchedResponse alloc] initWithAccepted:NO desc:@"answerNO"];
         }
     }
     [self.OnCallStateDelegate onClosed:callId desc:@"answerTimeOut"];
-    return [[MIMCLaunchedResponse alloc] initWithAccepted:false desc:@"answerTimeOut"];
+    return [[MIMCLaunchedResponse alloc] initWithAccepted:NO desc:@"answerTimeOut"];
 }
 
-- (void)onAnswered:(int64_t)callId accepted:(Boolean)accepted desc:(NSString *)desc {
+- (void)onAnswered:(int64_t)callId accepted:(BOOL)accepted desc:(NSString *)desc {
     [self.OnCallStateDelegate onAnswered:callId accepted:accepted desc:desc];
 }
 

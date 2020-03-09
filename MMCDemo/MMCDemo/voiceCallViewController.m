@@ -167,7 +167,7 @@
     }];
 }
 
-- (void)onAnswered:(int64_t)callId accepted:(Boolean)accepted desc:(NSString *)desc {
+- (void)onAnswered:(int64_t)callId accepted:(BOOL)accepted desc:(NSString *)desc {
     NSLog(@"onAnswered, callId=%lld, accepted=%d, desc=%@", callId, accepted, desc);
     
     if (accepted == 1) {
@@ -240,7 +240,7 @@
                 audioPacket.payload = aacData;
                 audioPacket.sequence = ++weakSelf.sequence;
                 
-                if ([weakSelf.userManager.getUser sendRtsData:weakSelf.callId data:[audioPacket data] dataType:AUDIO dataPriority:MIMC_P0 canBeDropped:false resendCount:0 channelType:RELAY context:NULL] != -1) {
+                if ([weakSelf.userManager.getUser sendRtsData:weakSelf.callId data:[audioPacket data] dataType:AUDIO dataPriority:MIMC_P0 canBeDropped:NO resendCount:0 channelType:RELAY context:NULL] != -1) {
                     NSLog(@"sendRtsData success");
                     return;
                 }
