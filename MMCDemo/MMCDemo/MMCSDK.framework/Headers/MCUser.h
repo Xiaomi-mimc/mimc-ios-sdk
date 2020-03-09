@@ -259,6 +259,7 @@ static NSString *join(NSMutableDictionary *kvs) {
 - (BOOL)isSSOEnabled;
 - (void)setPingUcInterval:(int)pingUcInterval;
 - (int)getPingUcInterval;
+- (BOOL)getPermitLogin;
 
 - (void)setBaseOfBackoffWhenFetchToken:(TimeUnit)timeUnit andBase:(int64_t)base;
 - (void)setCapOfBackoffWhenFetchToken:(TimeUnit)timeUnit andCap:(int64_t)cap;
