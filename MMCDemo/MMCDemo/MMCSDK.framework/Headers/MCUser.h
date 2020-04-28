@@ -5,6 +5,7 @@
 //  Created by zhangdan on 2017/11/22.
 //  Copyright © 2017年 zhangdan. All rights reserved.
 //
+#define mStringIsEmpty(str) ([str isKindOfClass:[NSNull class]] || str == nil || [str length] < 1 ? YES : NO )
 
 #import <Foundation/Foundation.h>
 #import "objc/runtime.h"
