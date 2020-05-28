@@ -8,9 +8,9 @@
 
 ## [MMCSDK_2_2_2] - 2020-03-09
 
-### 变更
+### 变更(注意！!!获取token返回的数据必须原样返回，否则程序无法照常运行)
 
-* parseProxyServiceToken从后台获取的数据原样返回，可参考demo<font color=red>注意！获取token返回的数据必须原样返回，否则程序无法照常运行</font>
+* parseProxyServiceToken从后台获取的数据原样返回，可参考demo
 * 消息回调加上返回类型，具体用法可参考demo
 * 增加单点登录功能
 * sdk中所有Boolean调整为BOOL
