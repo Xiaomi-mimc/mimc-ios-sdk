@@ -62,7 +62,6 @@
 		37AA39AA21368469001148EF /* libiconv.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AA39A921368469001148EF /* libiconv.2.tbd */; };
 		37AA39AC21368475001148EF /* libbz2.1.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AA39AB21368475001148EF /* libbz2.1.0.tbd */; };
 		37AA39AE2136847F001148EF /* libz.1.2.5.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AA39AD2136847F001148EF /* libz.1.2.5.tbd */; };
-		37BF6251211007C3006DCAC8 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BF6250211007C3006DCAC8 /* openssl.framework */; };
 		37BF625421100875006DCAC8 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BF625321100874006DCAC8 /* SystemConfiguration.framework */; };
 		37BF6256211008A2006DCAC8 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BF6255211008A2006DCAC8 /* CoreTelephony.framework */; };
 		37BF625C2110181D006DCAC8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 37BF625B2110181D006DCAC8 /* libz.tbd */; };
@@ -288,7 +287,6 @@
 		37AA39AD2136847F001148EF /* libz.1.2.5.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.5.tbd; path = usr/lib/libz.1.2.5.tbd; sourceTree = SDKROOT; };
 		37AA3A342136866D001148EF /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		37AA3A3621368839001148EF /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		37BF6250211007C3006DCAC8 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = openssl.framework; sourceTree = "<group>"; };
 		37BF625321100874006DCAC8 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		37BF6255211008A2006DCAC8 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		37BF625B2110181D006DCAC8 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -326,7 +324,6 @@
 				10271CEE22054CD500CD74EC /* libavutil.a in Frameworks */,
 				37BF6256211008A2006DCAC8 /* CoreTelephony.framework in Frameworks */,
 				37BF625421100875006DCAC8 /* SystemConfiguration.framework in Frameworks */,
-				37BF6251211007C3006DCAC8 /* openssl.framework in Frameworks */,
 				370C4E6D208ECF6A00BBEEF2 /* MIMCProtoBuffer.framework in Frameworks */,
 				37FB637D216EFAD7003F0047 /* MMCSDK.framework in Frameworks */,
 				10271CF322054CD500CD74EC /* libavdevice.a in Frameworks */,
@@ -712,7 +709,6 @@
 				10271C5B22054CD400CD74EC /* FFmpeg-iOS */,
 				37FB637C216EFAD7003F0047 /* MMCSDK.framework */,
 				370C4E6C208ECF6A00BBEEF2 /* MIMCProtoBuffer.framework */,
-				37BF6250211007C3006DCAC8 /* openssl.framework */,
 				379BC8F320120DE1006F69DE /* NSString+Extension.h */,
 				379BC8F420120DEA006F69DE /* NSString+Extension.m */,
 				379BC8F020120DB6006F69DE /* UIImage+Extension.h */,
@@ -1164,7 +1160,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MMCDemo",
-					"\"$(SRCROOT)/MMCDemo/openssl.framework\"",
 					"\"$(SRCROOT)/MMCDemo/MMCSDK.framework\"",
 					"\"$(SRCROOT)/MMCDemo/MIMCProtoBuffer.framework\"",
 				);
@@ -1208,7 +1203,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/MMCDemo",
-					"\"$(SRCROOT)/MMCDemo/openssl.framework\"",
 					"\"$(SRCROOT)/MMCDemo/MMCSDK.framework\"",
 					"\"$(SRCROOT)/MMCDemo/MIMCProtoBuffer.framework\"",
 				);
