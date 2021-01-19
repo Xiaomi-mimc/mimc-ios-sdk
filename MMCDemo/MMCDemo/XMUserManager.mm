@@ -229,7 +229,8 @@ static NSString * answerNotificationStr = @"kMIMCanswerNotification";
     NSLog(@"handleOnlineMessageAck");
 }
 
-- (BOOL)onPullNotification {
+- (BOOL)onPullNotification:(int64_t)minSequence maxSequence:(int64_t)maxSequence {
+    NSLog(@"onPullNotification, minSequence=%lld, maxSequence=%lld", minSequence, maxSequence);
     return YES;
 }
 

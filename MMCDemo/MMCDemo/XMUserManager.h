@@ -62,7 +62,7 @@ extern int const CALLID_INVALID;
 - (void)handleSendGroupMessageTimeout:(MIMCGroupMessage *)groupMessage;
 - (BOOL)handleUnlimitedGroupMessage:(NSArray<MIMCGroupMessage*> *)packets;
 - (void)handleSendUnlimitedGroupMessageTimeout:(MIMCGroupMessage *)groupMessage;
-- (BOOL)onPullNotification;
+- (BOOL)onPullNotification:(int64_t)minSequence maxSequence:(int64_t)maxSequence;
 
 - (MIMCLaunchedResponse *)onLaunched:(NSString *)fromAccount fromResource:(NSString *)fromResource callId:(int64_t)callId appContent:(NSData *)appContent;
 - (void)onAnswered:(int64_t)callId accepted:(BOOL)accepted desc:(NSString *)desc; // 会话接通之后的回调
